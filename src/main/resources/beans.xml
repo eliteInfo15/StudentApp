@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:context="http://www.springframework.org/schema/context"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans
+    http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+    http://www.springframework.org/schema/context
+    http://www.springframework.org/schema/context/spring-context-3.0.xsd">
+<context:component-scan base-package="realtionalapi.service"></context:component-scan>
+<bean id="ds" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+<property name="driverClassName" value="com.mysql.jdbc.Driver"></property>
+<property name="url" value="jdbc:mysql://localhost:3306/mydb"></property>
+<property name="username" value="root"></property>
+<property name="password" value="root"></property>
+</bean>
+
+<bean id="sessionFactory" class="org.springframework.orm.hibernate3.annotation.AnnotationSessionFactoryBean">
+  <property name="dataSource" ref="ds"></property>
+  <property name="annotatedClasses">
+			<list>
+				<value>studentapp.model.Student</value>
+				
+			</list>
+  </property>
+  
+  <property name="hibernateProperties">
+  <props>
+        <prop key="hibernate.dialect">org.hibernate.dialect.MySQLDialect</prop>
+        <prop key="hibernate.show_sql">true</prop>
+        <prop key="hibernate.hbm2ddl.auto">update</prop>
+  </props>
+  </property>  
+</bean>
+<bean id="hibernateTemplate" class="org.springframework.orm.hibernate3.HibernateTemplate">
+<constructor-arg  name="sessionFactory" ref="sessionFactory"></constructor-arg>
+</bean>
+
+  
+  <bean id="studentDaoImpl" class="studentapp.daoimpl.StudentDAOImpl">
+  <property name="hibernateTemplate" ref="hibernateTemplate"></property>
+  </bean>
+    
+  <bean id="studentservice" class="studentapp.service.StudentService" >
+  <property name="studentDAOImpl" ref="studentDaoImpl"></property>
+  </bean>
+ 
+ <bean id="student" class="studentapp.model.Student">
+ </bean>
+ 
+  
+</beans>
